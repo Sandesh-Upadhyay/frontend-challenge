@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@apollo/client";
 import { useAuth } from "@/context/AuthContext";
@@ -8,7 +9,7 @@ import type { User } from "@/types/user";
 import { LoginForm, type LoginFormValues } from "@/components/forms/LoginForm";
 import { useEffect } from "react";
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -74,5 +75,21 @@ export default function LoginPage() {
         />
       </div>
     </div>
+  );
+}
+
+function LoginPageFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginPageFallback />}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
